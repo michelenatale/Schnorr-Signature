@@ -14,7 +14,7 @@ using static michele.natale.Schnorrs.Services.SchnorrServices;
 
 public struct SchnorrParameters
 {
-  
+
   public byte[] PublicKey { get; set; } = [];
   public byte[] PrivateKey { get; set; } = [];
 
@@ -23,7 +23,7 @@ public struct SchnorrParameters
 
   public readonly bool IsEmpty
   {
-    get => IsNullOrEmpty(this.PublicKey) 
+    get => IsNullOrEmpty(this.PublicKey)
       && IsNullOrEmpty(this.PublicKey) && this.PQG.IsEmpty;
   }
 
@@ -31,7 +31,7 @@ public struct SchnorrParameters
   {
   }
   public SchnorrParameters(string schnorr_param_pmei)
-    :this(FromPmei(schnorr_param_pmei))
+    : this(FromPmei(schnorr_param_pmei))
   {
   }
 
@@ -74,7 +74,7 @@ public struct SchnorrParameters
    bool without_keypair = true,
    HashAlgorithmName hname = default) =>
     this.GenerateParameters(
-      P_MIN_SIZE, Q_MIN_SIZE, 
+      P_MIN_SIZE, Q_MIN_SIZE,
       without_keypair, hname);
 
   public void GenerateParameters(
@@ -84,7 +84,7 @@ public struct SchnorrParameters
   {
     this.Reset();
     var tmp = new SchnorrGroup();
-    tmp.GenerateParameters(psize, qsize,hname);
+    tmp.GenerateParameters(psize, qsize, hname);
 
     this.PQG = tmp;
     if (!without_keypair) this.GenerateKeyPair();
@@ -181,5 +181,28 @@ public struct SchnorrParameters
     var (h, f) = PMEI.SchnorrParamPmeiHF(false);
     var (_, msg) = PMEI.FromPmei(param_pmei, h, f);
     return JDeserialize(msg);
+  }
+
+  public static SchnorrParameters[] RngSchnorrParameters(
+    int size, int psize = P_MIN_SIZE, int qsize = Q_MAX_SIZE, 
+    HashAlgorithmName hname = default)
+  {
+    var group = new SchnorrGroup();
+    hname = hname == default ? HashAlgorithmName.SHA512 : hname;
+    group.GenerateParameters(psize,qsize, hname);
+    return RngSchnorrParameters(size, group);
+  }
+
+  public static SchnorrParameters[] RngSchnorrParameters(
+    int size, SchnorrGroup group)
+  {
+    var result = new SchnorrParameters[size];
+    for (int i = 0; i < size; i++)
+    {
+      var param = new SchnorrParameters(group);
+      param.GenerateKeyPair();
+      result[i] = param;
+    }
+    return result;
   }
 }

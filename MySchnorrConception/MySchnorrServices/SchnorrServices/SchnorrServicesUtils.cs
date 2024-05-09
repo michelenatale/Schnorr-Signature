@@ -37,6 +37,16 @@ partial class SchnorrServices
     return ints.Length == 0;
   }
 
+  public static bool IsNullOrEmptyOrZero<T>(T[] ints)
+   where T : INumber<T>
+  {
+    if (ints is null) return true;
+    if (ints.Length == 0) return true;
+    foreach (var i in ints)
+      if(!T.IsZero(i)) return false; 
+    return true;
+  }
+
   public static BigInteger ModuloExt(BigInteger x, BigInteger m)
   {
     x %= m;

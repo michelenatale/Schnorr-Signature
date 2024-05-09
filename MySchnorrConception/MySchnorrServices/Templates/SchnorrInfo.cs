@@ -11,8 +11,7 @@ public class SchnorrInfo
   public byte[] Message { get; set; } = [];
   public SchnorrParameters Parameter { get; set; } = default;
 
-
-  public SchnorrInfo()
+  private SchnorrInfo()
   {
   }
 

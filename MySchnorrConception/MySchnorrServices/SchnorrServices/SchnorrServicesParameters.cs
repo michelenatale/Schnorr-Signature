@@ -23,6 +23,7 @@ partial class SchnorrServices
     AssertPQG(psize, qsize);
     var q = RngBigIntegerPrime(qsize);
     var p = Rng_P_From_Q(q, psize);
+    //var p = Rng_P_From_Q_(q, psize - qsize + 1);
     var g = Rng_G_From_PQ(p, q, qsize);
     var r = ToBytes(p, q, g);
     return (r[0], r[1], r[2]);
@@ -44,6 +45,18 @@ partial class SchnorrServices
     return result;
   }
 
+  //private static BigInteger Rng_P_From_Q_(BigInteger q, int bits)
+  //{
+  //  BigInteger result = BigInteger.Zero;
+  //  while (!IsMRPrime(result))
+  //  {
+  //    var k = RngBigInteger(bits);
+  //    result = BigInteger.Add(1, BigInteger.Multiply(k, q));
+  //    //if (result.Sign < 0) result = -result;
+  //  }
+  //  return result;
+  //}
+
   private static BigInteger Rng_G_From_PQ(BigInteger p, BigInteger q, int qsize)
   {
     var ratio = (p - 1) / q;
@@ -52,6 +65,19 @@ partial class SchnorrServices
     //g^q ≡ 1 mod p
     return BigInteger.ModPow(k, ratio, p);
   }
+
+  //private static (BigInteger A, BigInteger V) Rng_AV_From_PQH(
+  //  BigInteger p, BigInteger q, BigInteger h)
+  //{
+  //  var pm4 = BigInteger.Subtract(p, 4);
+  //  var bits = BitOfNumber(pm4);
+  //  var aa = RngBigInteger(bits - 1);
+  //  var a = BigInteger.Add(aa, 2);
+  //  var exp = p - 1 - a;
+  //  var v = BigInteger.ModPow(h, exp, p);
+  //  return (a, v);
+  //}
+
 
   private static bool IsPowerTwo(int number)
   {

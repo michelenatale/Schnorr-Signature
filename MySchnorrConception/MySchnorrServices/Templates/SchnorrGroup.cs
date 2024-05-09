@@ -43,8 +43,8 @@ public struct SchnorrGroup
 
   public SchnorrGroup((
     byte[] p, byte[] q, byte[] g,
-    HashAlgorithmName hname)pqgh)
-    : this(pqgh.p, pqgh.q, pqgh.g,pqgh. hname)
+    HashAlgorithmName hname) pqgh)
+    : this(pqgh.p, pqgh.q, pqgh.g, pqgh.hname)
   {
   }
 
@@ -144,6 +144,11 @@ public struct SchnorrGroup
     this.HashName = HashAlgorithmName.SHA512;
   }
 
+  public readonly bool Equality(SchnorrGroup group)
+  {
+    return Equality(this, group);
+  }
+
 
   //Statics
 
@@ -166,4 +171,11 @@ public struct SchnorrGroup
     return result;
   }
 
+  public static bool Equality(SchnorrGroup left, SchnorrGroup right)
+  {
+    if (!left.P.SequenceEqual(right.P)) return false;
+    if (!left.G.SequenceEqual(right.G)) return false;
+    if (!left.Q.SequenceEqual(right.Q)) return false;
+    return left.HashName == right.HashName;
+  }
 }
