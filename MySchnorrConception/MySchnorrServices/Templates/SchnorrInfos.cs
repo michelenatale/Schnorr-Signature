@@ -123,14 +123,6 @@ public class SchnorrInfos
     return result;
   }
 
-  //private static BigInteger SumProduct(byte[][] privkeys, BigInteger hash)
-  //{
-  //  var result = BigInteger.Zero;
-  //  foreach (var bi in privkeys.Select(x => new BigInteger(x)))
-  //    result += bi * hash;
-  //  return result;
-  //}
-
   private static BigInteger SumProduct(
     List<SchnorrParameters> param, BigInteger hash)
   {
