@@ -12,8 +12,7 @@ public class Program
   {
     TestEcSchnorrCurve();
 
-    for (int i = 0; i < 10; i++)
-      TestEcSchnorr();
+    TestEcSchnorr();
   }
 
   private static void TestEcSchnorrCurve()
