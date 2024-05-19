@@ -250,9 +250,10 @@ public class Program
     //A Message
     var msg = "This is my Message!"u8.ToArray();
 
-    //Generates new instances of SchnorrParameters
-    //for the participants who sign.
+    //Number of signatories
     var size = 5;
+
+    //New instance of Schnorrparameters
     var sparams = SchnorrParameters.RngSchnorrParameters(size); 
 
     //New Instance MultiSchnorrInfo for Singning and Verification
