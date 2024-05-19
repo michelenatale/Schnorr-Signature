@@ -59,11 +59,6 @@ partial class EcSchnorrServices
     if (IsEcInfinity(right))
       return left;
 
-    //EcCurveParameters param;
-    //if (IsEquality(lparam, rparam))
-    //  param = lparam;
-    //else throw new Exception("Both curves must be the same.");
-
     EcPointCheck(left, param);
     EcPointCheck(right, param);
 
