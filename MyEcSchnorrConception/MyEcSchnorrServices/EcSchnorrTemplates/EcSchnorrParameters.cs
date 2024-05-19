@@ -1,9 +1,11 @@
-﻿using System.Numerics;
+﻿
+using System.Numerics;
 using System.Security.Cryptography;
 using System.Text.Json.Serialization;
 
 namespace michele.natale.Schnorrs;
 
+using michele.natale.Schnorrs.EcServices;
 using static michele.natale.Schnorrs.EcServices.EcSchnorrServices;
 
 public struct EcSchnorrParameters
@@ -25,7 +27,7 @@ public struct EcSchnorrParameters
 
   public EcSchnorrParameters(ECCurve curve, HashAlgorithmName hname = default)
   {
-    this.ECCurve = CopyEC(curve);
+    this.ECCurve = EcSchnorrServices.Copy(curve);
     this.EcCurveParameters = new EcCurveParameters(curve);
     this.PublicKey = EcPointEmpty;
     this.PrivateKey = [];
@@ -35,10 +37,10 @@ public struct EcSchnorrParameters
   public EcSchnorrParameters(
     EcSchnorrParameters ec_schnorr_param)
   {
-    this.ECCurve = CopyEC(ec_schnorr_param.ECCurve);
+    this.ECCurve = EcSchnorrServices.Copy(ec_schnorr_param.ECCurve);
     this.EcCurveParameters = ec_schnorr_param.EcCurveParameters.Copy();
 
-    this.PublicKey = IsEcPointEmpty(ec_schnorr_param.PublicKey) ? EcPointEmpty : Copy(ec_schnorr_param.PublicKey);
+    this.PublicKey = IsEcPointEmpty(ec_schnorr_param.PublicKey) ? EcPointEmpty : EcSchnorrServices.Copy(ec_schnorr_param.PublicKey);
     this.PrivateKey = IsNullOrEmpty(ec_schnorr_param.PrivateKey) ? [] : [.. ec_schnorr_param.PrivateKey];
     HashAlgorithmName = ec_schnorr_param.HashAlgorithmName == default ? DEFAULT_H_NAME : ec_schnorr_param.HashAlgorithmName;
   }
@@ -47,8 +49,8 @@ public struct EcSchnorrParameters
     ECCurve curve, ReadOnlySpan<byte> priv_key,
     ECPoint pub_key, HashAlgorithmName hname = default)
   {
-    this.ECCurve = CopyEC(curve);
-    this.PublicKey = Copy(pub_key);
+    this.ECCurve = EcSchnorrServices.Copy(curve);
+    this.PublicKey = EcSchnorrServices.Copy(pub_key);
     this.PrivateKey = priv_key.ToArray();
     this.EcCurveParameters = new EcCurveParameters(curve);
 
@@ -119,27 +121,35 @@ public struct EcSchnorrParameters
       priv = RngBigIntegerBSize(size) % n;
 
     var pub = ECMultiply(priv, this.EcCurveParameters.G, this.EcCurveParameters);
-    this.PublicKey = Copy(pub);
+    this.PublicKey = EcSchnorrServices.Copy(pub);
     this.PrivateKey = FromBILE(priv);
   }
 
+  public readonly EcSchnorrParameters Copy()
+  {
+    return new EcSchnorrParameters(this);
+  }
+
+  public static EcSchnorrParameters[] RngEcSchnorrParameters(
+    ECCurve curve, int size, HashAlgorithmName hname = default)
+  {
+    var result = new EcSchnorrParameters[size];
+    for (int i = 0; i < result.Length; i++)
+    {
+      result[i] = new EcSchnorrParameters(curve, hname);
+      result[i].GenerateKeyPair();
+    }
+    return result;
+  }
+
+
   public static bool IsEcPointEmpty(ECPoint other) =>
     IsEquality(other, EcPointEmpty);
+
   private static ECPoint EcPointEmpty =>
     new()
     {
       X = [],
       Y = []
     };
-
-  private static ECPoint Copy(ECPoint ecpoint)
-  {
-    return new ECPoint()
-    {
-      X = [.. ecpoint.X!],
-      Y = [.. ecpoint.Y!],
-    };
-  }
-
-
 }

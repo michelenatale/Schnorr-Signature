@@ -53,7 +53,7 @@ partial class EcSchnorrServices
 
     var concat = message.ToArray().Concat(s1.X!).Concat(s1.Y!);
     var hash = new BigInteger(HashDataAlgo(concat.ToArray(), hname), true);
-    var current = ECAddition(s1, ECMultiply(hash, pubkey, param), param, param);
+    var current = ECAddition(s1, ECMultiply(hash, pubkey, param), param);
 
     var g = Copy(param.G);
     var expected = ECMultiply(s2, g, param);

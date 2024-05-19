@@ -3,7 +3,9 @@
 using System.Numerics;
 using System.Security.Cryptography;
 
+
 namespace michele.natale.Schnorrs.EcServices;
+
 
 partial class EcSchnorrServices
 {
@@ -27,9 +29,9 @@ partial class EcSchnorrServices
     while (!scalar.IsZero)
     {
       if (!scalar.IsEven)
-        result = ECAddition(result, addend, param, param);
+        result = ECAddition(result, addend, param);
 
-      addend = ECAddition(addend, addend, param, param);
+      addend = ECAddition(addend, addend, param);
 
       scalar >>= 1;
     }
@@ -49,8 +51,7 @@ partial class EcSchnorrServices
 
   public static ECPoint ECAddition(
     ECPoint left, ECPoint right,
-    EcCurveParameters lparam,
-    EcCurveParameters rparam)
+    EcCurveParameters param)
   {
     if (IsEcInfinity(left))
       return right;
@@ -58,10 +59,10 @@ partial class EcSchnorrServices
     if (IsEcInfinity(right))
       return left;
 
-    EcCurveParameters param;
-    if (IsEquality(lparam, rparam))
-      param = lparam;
-    else throw new Exception("Both curves must be the same.");
+    //EcCurveParameters param;
+    //if (IsEquality(lparam, rparam))
+    //  param = lparam;
+    //else throw new Exception("Both curves must be the same.");
 
     EcPointCheck(left, param);
     EcPointCheck(right, param);
@@ -87,21 +88,21 @@ partial class EcSchnorrServices
     return result;
   }
 
-  public static ECPoint ECAddition(ECPoint[] points, EcCurveParameters[] ecparams)
+  public static ECPoint ECAddition(ECPoint[] points, EcCurveParameters ecparams)
   {
-    if ((points.Length <= 2) || (points.Length != ecparams.Length))
+    if ((points.Length <= 2) /*|| (points.Length != ecparams.Length)*/)
       throw new ArgumentException("Minimum number of points is 2.");
 
     var result = EcInfinity;
     for (int i = 1; i < points.Length; i++)
-      result = ECAddition(points[i - 1], points[i], ecparams[i - 1], ecparams[i]);
+      result = ECAddition(points[i - 1], points[i], ecparams);
 
     return result;
   }
 
   public static ECPoint ECDouble(ECPoint point, EcCurveParameters param)
   {
-    return ECAddition(point, point, param, param);
+    return ECAddition(point, point, param);
   }
 
   public static ECPoint ECNegate(ECPoint point, EcCurveParameters param)

@@ -83,7 +83,7 @@ partial class EcSchnorrServices
       Y = [.. ecpoint.Y!],
     };
 
-  public static ECCurve CopyEC(ECCurve curve)
+    public static ECCurve Copy(ECCurve curve)
   {
     if (curve.Oid is not null)
     {

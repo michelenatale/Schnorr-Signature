@@ -99,10 +99,10 @@ public class EcCurveParameters
   public (int Length, Oid Oid, BigInteger A, BigInteger B, BigInteger N, BigInteger P, BigInteger H, (BigInteger X, BigInteger Y) G) ToParametersBigInteger()
   {
     //Curve wird nicht zurückgegeben, sondern nur Oid
-    return (this.Length, this.Oid, ToBiginteger(this.A),
-            ToBiginteger(this.B), ToBiginteger(this.N),
-            ToBiginteger(this.P), ToBiginteger(this.H),
-            (ToBiginteger(this.G.X!), ToBiginteger(this.G.Y!)));
+    return (this.Length, this.Oid, ToBILE(this.A),
+            ToBILE(this.B), ToBILE(this.N),
+            ToBILE(this.P), ToBILE(this.H),
+            (ToBILE(this.G.X!), ToBILE(this.G.Y!)));
   }
 
   public bool IsEquality(EcCurveParameters other)
@@ -146,12 +146,12 @@ public class EcCurveParameters
     }
   }
 
-  private static BigInteger ToBiginteger(byte[] bytes) => new(bytes);
+  //private static BigInteger ToBiginteger(byte[] bytes) => new(bytes);
 
-  private static byte[] SZF(byte[] bytes)
-  {
-    return new byte[] { 0 }.Concat(bytes).Reverse().ToArray();
-  }
+  //private static byte[] SZF(byte[] bytes)
+  //{
+  //  return new byte[] { 0 }.Concat(bytes).Reverse().ToArray();
+  //}
 
   private static Oid Copy(Oid oid) => new() { Value = oid.Value, FriendlyName = oid.FriendlyName };
 }

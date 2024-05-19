@@ -18,7 +18,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="PMEI\" />
+    <Compile Remove="PMEI\**" />
+    <EmbeddedResource Remove="PMEI\**" />
+    <None Remove="PMEI\**" />
   </ItemGroup>
 
 </Project>
