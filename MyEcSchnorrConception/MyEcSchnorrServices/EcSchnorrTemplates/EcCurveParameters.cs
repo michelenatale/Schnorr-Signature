@@ -146,12 +146,5 @@ public class EcCurveParameters
     }
   }
 
-  //private static BigInteger ToBiginteger(byte[] bytes) => new(bytes);
-
-  //private static byte[] SZF(byte[] bytes)
-  //{
-  //  return new byte[] { 0 }.Concat(bytes).Reverse().ToArray();
-  //}
-
   private static Oid Copy(Oid oid) => new() { Value = oid.Value, FriendlyName = oid.FriendlyName };
 }
