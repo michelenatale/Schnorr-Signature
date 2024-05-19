@@ -1,6 +1,5 @@
 ﻿
 
-
 namespace MyECSchnorrConceptionTest;
 
 using michele.natale.Schnorrs;
@@ -13,6 +12,8 @@ public class Program
     TestEcSchnorrCurve();
 
     TestEcSchnorr();
+
+    TestEcSchnorrMulti();
   }
 
   private static void TestEcSchnorrCurve()
@@ -51,4 +52,37 @@ public class Program
     Console.WriteLine(verify);
     if (!verify) throw new Exception();
   }
+
+
+  public static void TestEcSchnorrMulti()
+  {
+    
+    //A Message 
+    var message = "This is my Message!"u8.ToArray(); 
+
+    //Random Curve
+    var curve = RngEcCurve();
+
+    //Number of signatories
+    var size = 5;
+
+    //Create new EcSchnorrParameters.
+    //All keypairs are random regenerated.
+    var ecsparams = EcSchnorrParameters.RngEcSchnorrParameters(curve, size);
+
+    //Create a EcSchnorrInfos for sign and verify.
+    var ecinfos = new EcSchnorrInfos(message, ecsparams);
+
+    //Generate the signature.
+    var sign = ecinfos.MultiSign();
+
+    //Check is verifiy
+    var verify = ecinfos.MultiVerify(sign); 
+
+    //Output and check from result.
+    Console.WriteLine(verify);
+    if (!verify) throw new Exception();
+  }
+
+
 }
