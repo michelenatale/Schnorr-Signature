@@ -43,9 +43,9 @@ public class EcSchnorrInfos
     hname = hname == default ? DEFAULT_H_NAME : hname;
     var concat = Message.ToArray().Concat(s1.X!).Concat(s1.Y!);
     var hash = new BigInteger(HashDataAlgo(concat.ToArray(), hname), true);
-    var summul = SumProduct(this.Parameters, hash);
+    var sum_product = this.Parameters.Aggregate(BigInteger.Zero, (x, y) => ToBILE(y.PrivateKey) * hash + x);
 
-    var s2 = (k + summul) % n;
+    var s2 = (k + sum_product) % n;
     return new EcSchnorrSignature(s1, s2.ToByteArray());
   }
 
@@ -55,11 +55,11 @@ public class EcSchnorrInfos
 
     var (s1, ss) = signature.ToParameters;
 
-    var s2 = new BigInteger(ss, true); 
+    var s2 = new BigInteger(ss, true);
     var param = this.Parameters.First().EcCurveParameters;
     var hname = this.Parameters.First().HashAlgorithmName;
     var g = Copy(this.Parameters.First().EcCurveParameters.G);
-    var n = ToBILE(this.Parameters.First().EcCurveParameters.N); 
+    var n = ToBILE(this.Parameters.First().EcCurveParameters.N);
 
     if (this.Parameters.Where(x => IsEcInfinity(x.PublicKey)).Any()) return false;
     if (this.Parameters.Where(x => !IsOnEcCurve(x.PublicKey, param)).Any()) return false;
@@ -67,17 +67,13 @@ public class EcSchnorrInfos
 
     var concat = Message.ToArray().Concat(s1.X!).Concat(s1.Y!);
     var hash = new BigInteger(HashDataAlgo(concat.ToArray(), hname), true);
-    var current = this.Parameters.Aggregate(s1, 
+    var current = this.Parameters.Aggregate(s1,
         (seed, ecp) => ECAddition(seed, ECMultiply(hash, ecp.PublicKey, ecp.EcCurveParameters), ecp.EcCurveParameters));
- 
+
     var expected = ECMultiply(s2, g, param);
     return current.X!.SequenceEqual(expected.X!)
            && current.Y!.SequenceEqual(expected.Y!);
   }
-
-   private static BigInteger HashData(
-  BigInteger message, HashAlgorithmName hname = default) =>
-    HashData(message.GetByteCount(), hname); 
 
   private void AssertMultiSign()
   {
@@ -125,16 +121,8 @@ public class EcSchnorrInfos
       throw new ArgumentException($"{nameof(signature)} has failed!");
   }
 
-  private static BigInteger SumProduct(List<EcSchnorrParameters> param, BigInteger hash)
-  {
-    var result = BigInteger.Zero;
-    foreach (var mul in param.Select(x => ToBILE(x.PrivateKey))) 
-      result += mul * hash;
-    return result;
-  } 
-
   private static bool IsEmpty(ECPoint ecp)
   {
     return IsNullOrEmptyOrZero(ecp.X) && IsNullOrEmptyOrZero(ecp.Y);
-  } 
+  }
 }
