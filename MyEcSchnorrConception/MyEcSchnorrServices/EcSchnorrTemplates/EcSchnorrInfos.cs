@@ -43,6 +43,8 @@ public class EcSchnorrInfos
     hname = hname == default ? DEFAULT_H_NAME : hname;
     var concat = Message.ToArray().Concat(s1.X!).Concat(s1.Y!);
     var hash = new BigInteger(HashDataAlgo(concat.ToArray(), hname), true);
+    
+    //The order of the PrivateKeys does not matter.
     var sum_product = this.Parameters.Aggregate(BigInteger.Zero, (x, y) => ToBILE(y.PrivateKey) * hash + x);
 
     var s2 = (k + sum_product) % n;
